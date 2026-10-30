@@ -9,7 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,11 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.media3.ui.PlayerView
 import com.example.cctvstreamer.service.CctvStreamService
-import com.example.cctvstreamer.ui.theme.CCTVStreamerTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -30,28 +30,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        val sampleRtspUrl = "rtsp://your_camera_ip_here:554/stream1"
-        val player = viewModel.initializePlayer(sampleRtspUrl)
+        // Secured gateway or authorized stream endpoint
+        val secureStreamUrl = "rtsp://your_authorized_gateway_ip:554/stream"
+        val player = viewModel.initializePlayer(secureStreamUrl)
 
         setContent {
-            CCTVStreamerTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    CCTVHomeScreen(player = player, onReconnect = {
-                        // Reconnect logic agar stream pause/fail ho jaye
-                        player.prepare()
-                        player.play()
-                    })
-                }
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = Color(0xFF0B0F19)
+            ) {
+                SecureCctvScreen(player = player, onReconnect = {
+                    player.prepare()
+                    player.play()
+                })
             }
         }
 
-        startCctvService()
+        startBackgroundService()
     }
 
-    private fun startCctvService() {
+    private fun startBackgroundService() {
         val serviceIntent = Intent(this, CctvStreamService::class.java)
         ContextCompat.startForegroundService(this, serviceIntent)
     }
@@ -59,28 +57,28 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CCTVHomeScreen(player: androidx.media3.exoplayer.ExoPlayer, onReconnect: () -> Unit) {
+fun SecureCctvScreen(player: androidx.media3.exoplayer.ExoPlayer, onReconnect: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = Icons.Default.Videocam,
+                            imageVector = Icons.Default.Security,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = Color(0xFF00E5FF),
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "KAIZO // SECURE-FEED", 
+                            text = "SECURE // FEED MONITOR", 
                             style = MaterialTheme.typography.titleMedium,
                             color = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                    containerColor = Color(0xFF131B2E)
                 )
             )
         }
@@ -89,9 +87,8 @@ fun CCTVHomeScreen(player: androidx.media3.exoplayer.ExoPlayer, onReconnect: () 
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(Color(0xFF0B0F19))
         ) {
-            // Video Player Container with Modern Rounded Corners & Border Glow
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -109,7 +106,7 @@ fun CCTVHomeScreen(player: androidx.media3.exoplayer.ExoPlayer, onReconnect: () 
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Live Indicator Badge (Top Right)
+                // Live Secure Indicator
                 Surface(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -129,23 +126,23 @@ fun CCTVHomeScreen(player: androidx.media3.exoplayer.ExoPlayer, onReconnect: () 
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "LIVE",
+                            text = "SECURE LIVE",
                             style = MaterialTheme.typography.labelSmall,
                             color = Color.White
                         )
                     }
                 }
 
-                // Floating Reconnect Button (Bottom Center)
+                // Reconnect / Refresh Control
                 FloatingActionButton(
                     onClick = onReconnect,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .padding(24.dp),
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = Color(0xFF00E5FF),
+                    contentColor = Color.Black
                 ) {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Reconnect")
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Sync Stream")
                 }
             }
         }
