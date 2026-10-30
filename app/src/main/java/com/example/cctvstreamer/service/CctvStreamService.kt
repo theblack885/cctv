@@ -13,8 +13,8 @@ import com.example.cctvstreamer.R
 class CctvStreamService : Service() {
 
     companion object {
-        const val CHANNEL_ID = "CctvServiceChannel"
-        const val NOTIFICATION_ID = 1
+        const val CHANNEL_ID = "SecureCctvServiceChannel"
+        const val NOTIFICATION_ID = 101
     }
 
     override fun onCreate() {
@@ -23,9 +23,10 @@ class CctvStreamService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Background secure stream management notification
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("CCTV Stream Active")
-            .setContentText("Background me live feed chal rahi hai...")
+            .setContentTitle("Secure Command Center")
+            .setContentText("Background feed management active...")
             .setSmallIcon(android.R.drawable.ic_menu_camera)
             .setOngoing(true)
             .build()
@@ -40,7 +41,7 @@ class CctvStreamService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val serviceChannel = NotificationChannel(
                 CHANNEL_ID,
-                "CCTV Background Service Channel",
+                "Secure Stream Background Channel",
                 NotificationManager.IMPORTANCE_LOW
             )
             val manager = getSystemService(NotificationManager::class.java)
